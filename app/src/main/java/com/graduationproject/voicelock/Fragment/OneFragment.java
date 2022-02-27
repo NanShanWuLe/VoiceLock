@@ -1,49 +1,37 @@
 package com.graduationproject.voicelock.Fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Chronometer;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.graduationproject.voicelock.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link OneFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class OneFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
+public class OneFragment extends Fragment implements View.OnClickListener{
+    
+    private ImageButton Btn_start;
+    private ImageButton Btn_stop;
+    private Chronometer chronometer;
+    private View view;
+    private long mRecordTime = 0;
+    private boolean Suspended = true;
     public OneFragment() {
         // Required empty public constructor
     }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment OneFragment.
-     */
+    
     // TODO: Rename and change types and number of parameters
     public static OneFragment newInstance(String param1, String param2) {
         OneFragment fragment = new OneFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -51,16 +39,66 @@ public class OneFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_one, container, false);
+        if (view == null){
+            view = inflater.inflate(R.layout.fragment_one, container, false);
+        }
+        setId();
+        chronometer.setBase(SystemClock.elapsedRealtime());
+        return view;
+    }
+    
+    private void setId(){
+        Btn_start = view.findViewById(R.id.record_start);
+        Btn_stop = view.findViewById(R.id.record_stop);
+        chronometer = view.findViewById(R.id.tx_timer);
+        Btn_start.setOnClickListener(this);
+        Btn_stop.setOnClickListener(this);
+    }
+
+    @SuppressLint({"NonConstantResourceId", "UseCompatLoadingForDrawables"})
+    @Override
+    public void onClick(View v) {
+        TextView tx = (TextView) view.findViewById(R.id.tx_start);
+        switch (v.getId()){
+            case R.id.record_start:
+                if (Suspended){
+                    /*
+                    * 开始录制
+                    * */
+                    Suspended = false;
+                    Toast.makeText(getContext(), "开始录制", Toast.LENGTH_SHORT).show();
+                    Btn_start.setBackground(getResources().getDrawable(R.drawable.suspend));
+                    tx.setText("暂停");
+                    if (mRecordTime != 0) {
+                        chronometer.setBase(chronometer.getBase() + (SystemClock.elapsedRealtime() - mRecordTime));
+                    } else {
+                        chronometer.setBase(SystemClock.elapsedRealtime());
+                    }
+                    chronometer.start();
+                }else {
+                    /*
+                     * 暂停录制
+                     * */
+                    Suspended = true;
+                    Toast.makeText(getContext(), "暂停录制", Toast.LENGTH_SHORT).show();
+                    Btn_start.setBackground(getResources().getDrawable(R.drawable.start));
+                    tx.setText("开始");
+                    chronometer.stop();
+                    mRecordTime = SystemClock.elapsedRealtime();
+                }
+                break;
+            case R.id.record_stop:
+                /*
+                 * 结束录制
+                 * */
+                Toast.makeText(getContext(), "结束录制", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 }

@@ -10,7 +10,10 @@
         android:id="@+id/vp2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/tab_vp" />
+        android:layout_above="@id/tab_vp" >
+
+        
+    </androidx.viewpager2.widget.ViewPager2>
 
     <RadioGroup
         android:id="@+id/tab_vp"
