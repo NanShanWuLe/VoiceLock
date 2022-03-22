@@ -5,12 +5,18 @@
     android:layout_height="match_parent"
     tools:context=".Fragment.TwoFragment">
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="刷新"
+        android:id="@+id/refresh"
+        ></Button>
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:gravity="center"
-        android:layout_gravity="center"
+    <ListView
+        android:layout_marginTop="60dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="TweFragment" />
+        android:id="@+id/listView"></ListView>
 
 </FrameLayout>

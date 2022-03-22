@@ -10,63 +10,13 @@
         android:id="@+id/vp2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/tab_vp" >
-
-        
+        android:layout_above="@id/bottomNavigation" >
     </androidx.viewpager2.widget.ViewPager2>
 
-    <RadioGroup
-        android:id="@+id/tab_vp"
+    <com.luseen.luseenbottomnavigation.BottomNavigation.BottomNavigationView
+        android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:gravity="bottom"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/rb_home"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@null"
-            android:checked="true"
-            android:drawableTop="@drawable/home"
-            android:drawablePadding="5dp"
-            android:gravity="center"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:text="home"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
-
-        <RadioButton
-            android:id="@+id/rb_msg"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@null"
-            android:drawableTop="@drawable/msg"
-            android:drawablePadding="5dp"
-            android:gravity="center"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:text="msg"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
-
-        <RadioButton
-            android:id="@+id/rg_my"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:button="@null"
-            android:drawableTop="@drawable/setting"
-            android:drawablePadding="5dp"
-            android:gravity="center"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:text="my"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
-    </RadioGroup>
+        />
 </RelativeLayout>

@@ -14,7 +14,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.graduationproject.voicelock.MainActivity;
 import com.graduationproject.voicelock.R;
+import com.graduationproject.voicelock.ToolUtils.AudioRecorder;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class OneFragment extends Fragment implements View.OnClickListener{
     
@@ -22,6 +27,7 @@ public class OneFragment extends Fragment implements View.OnClickListener{
     private ImageButton Btn_stop;
     private Chronometer chronometer;
     private View view;
+    private AudioRecorder audioRecorder;
     private long mRecordTime = 0;
     private boolean Suspended = true;
     public OneFragment() {
@@ -49,6 +55,7 @@ public class OneFragment extends Fragment implements View.OnClickListener{
             view = inflater.inflate(R.layout.fragment_one, container, false);
         }
         setId();
+        audioRecorder = AudioRecorder.getInstance();
         chronometer.setBase(SystemClock.elapsedRealtime());
         return view;
     }
@@ -59,6 +66,20 @@ public class OneFragment extends Fragment implements View.OnClickListener{
         chronometer = view.findViewById(R.id.tx_timer);
         Btn_start.setOnClickListener(this);
         Btn_stop.setOnClickListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (audioRecorder.getStatus() == AudioRecorder.Status.STATUS_START) {
+            audioRecorder.pauseRecord();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        audioRecorder.release();
+        super.onDestroy();
     }
 
     @SuppressLint({"NonConstantResourceId", "UseCompatLoadingForDrawables"})
@@ -81,6 +102,17 @@ public class OneFragment extends Fragment implements View.OnClickListener{
                         chronometer.setBase(SystemClock.elapsedRealtime());
                     }
                     chronometer.start();
+                    
+                    try {
+                        if (audioRecorder.getStatus() == AudioRecorder.Status.STATUS_NO_READY){
+                            String fileName = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date());
+                            audioRecorder.createDefaultAudio(fileName);
+                            audioRecorder.startRecord(null);
+                        }
+                    }catch (IllegalAccessError error){
+                        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                    
                 }else {
                     /*
                      * 暂停录制
@@ -91,12 +123,31 @@ public class OneFragment extends Fragment implements View.OnClickListener{
                     tx.setText("开始");
                     chronometer.stop();
                     mRecordTime = SystemClock.elapsedRealtime();
+                    
+                    try {
+                        if (audioRecorder.getStatus() == AudioRecorder.Status.STATUS_START){
+                            audioRecorder.pauseRecord();
+                            break;
+                        }
+                    }catch (IllegalAccessError error){
+                        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
                 break;
             case R.id.record_stop:
                 /*
                  * 结束录制
                  * */
+                chronometer.stop();
+                mRecordTime = 0;
+                Suspended = true;
+                chronometer.setBase(SystemClock.elapsedRealtime());
+                Btn_start.setBackground(getResources().getDrawable(R.drawable.start));
+                try {
+                    audioRecorder.stopRecord();
+                }catch (IllegalAccessError error){
+                    Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
                 Toast.makeText(getContext(), "结束录制", Toast.LENGTH_SHORT).show();
                 break;
         }
